@@ -172,6 +172,5 @@ def cities_country (df, country):
     newdf['city'] = newdf['city'].apply(clean_city)
     newdf.rename(columns={'hotel_id': 'agoda_num'}, inplace=True, errors='raise')
     newdf["booking_num"] = newdf.apply(lambda x: booking_city(x["city"], x["countryisocode"]), axis=1)
-    newdf.booking_num = newdf.booking_num.astype("int64")
+    newdf.booking_num = newdf.booking_num.astype("Int64")
     return newdf
-    
