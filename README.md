@@ -68,3 +68,7 @@
 - The region with most hotels listed in Booking is Europe where the headquarters are localized
 - The region with more hotels listed in Agoda is Asia where the headquarters are localized
 - Created an application to compare Agoda and Booking total number of hotels in any country by cities and plot the results geographically
+## Future Improvements:
+- Plotting functions need some minor adjustments
+- Geolocation of the cities need to be adjusted with an external service (API)
+- Scrapping method need some minor adjustments to avoid some missing data.

@@ -172,5 +172,11 @@ def cities_country (df, country):
     newdf['city'] = newdf['city'].apply(clean_city)
     newdf.rename(columns={'hotel_id': 'agoda_num'}, inplace=True, errors='raise')
     newdf["booking_num"] = newdf.apply(lambda x: booking_city(x["city"], x["countryisocode"]), axis=1)
-    newdf.booking_num = newdf.booking_num.astype("Int64")
+    try: 
+        newdf.booking_num = newdf.booking_num.astype("int64")
+    except:
+        newdf = newdf.dropna(axis = 0, how = 'any')
+        newdf.booking_num = newdf.booking_num.astype("int64")
+        newdf = newdf.reset_index()
+        print("Some cities that generate a scrapping error have been eliminated")
     return newdf
