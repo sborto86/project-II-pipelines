@@ -90,11 +90,18 @@ def country_comp (df, country, fl=16, fh=8, mx=0.1, my=0.05, names="all"):
     title=f"Hotels  {country} in Agoda", 
     ax=axs[0])
     # adding names of the cities
-    top = df.agoda_num.max()/5
-    for i in range(df.shape[0]):
-        if df.agoda_num[i] > top:
-            axs[0].text(x=df.longitude[i]+0.01, y=df.latitude[i]-0.03,s=df.city[i], fontdict=dict(size=8))
-            axs[1].text(x=df.longitude[i]+0.01, y=df.latitude[i]-0.03,s=df.city[i], fontdict=dict(size=8))
+    if df.agoda_num.max() >= df.booking_num.max():
+        top = df.agoda_num.max()/5
+        for i in range(df.shape[0]):
+            if df.agoda_num[i] > top:
+                axs[0].text(x=df.longitude[i]+0.01, y=df.latitude[i]-0.03,s=df.city[i], fontdict=dict(size=8))
+                axs[1].text(x=df.longitude[i]+0.01, y=df.latitude[i]-0.03,s=df.city[i], fontdict=dict(size=8))
+    else:
+        top = df.booking_num.max()/5
+        for i in range(df.shape[0]):
+            if df.booking_num[i] > top:
+                axs[0].text(x=df.longitude[i]+0.01, y=df.latitude[i]-0.03,s=df.city[i], fontdict=dict(size=8))
+                axs[1].text(x=df.longitude[i]+0.01, y=df.latitude[i]-0.03,s=df.city[i], fontdict=dict(size=8))
     #Removing X and Y labels
     axs[0].set(xlabel='', ylabel='')
     #adding padding
