@@ -80,10 +80,6 @@ def bing_url(city, country):
         return None 
 
 def booking_city(city, country, region=False):
-    if "requests" not in dir():
-        import requests
-    if "BeautifulSoup" not in dir():
-        from bs4 import BeautifulSoup
     '''
     Function name and scrape the number of hotels in the booking.com platform for a given city or region
     * The city has to be given as a string in english
@@ -93,7 +89,14 @@ def booking_city(city, country, region=False):
     * If there is no landing page in google search set the number to 0.
     * If there's any error in the scraping returns None.
     '''
-    city2 = city.replace(" ", "-")
+    if "requests" not in dir():
+        import requests
+    if "BeautifulSoup" not in dir():
+        from bs4 import BeautifulSoup
+    if "unidecode" not in dir():
+        from unidecode import unidecode
+    city2 = unidecode(city, "utf-8")
+    city2 = city2.replace(" ", "-")
     number =""
     url = f"https://www.booking.com/city/{country.lower()}/{city2.lower()}.html"
     url2 = f"https://www.booking.com/region/{country.lower()}/{city2.lower()}.html"
@@ -171,53 +174,4 @@ def cities_country (df, country):
     newdf["booking_num"] = newdf.apply(lambda x: booking_city(x["city"], x["countryisocode"]), axis=1)
     newdf.booking_num = newdf.booking_num.astype("int64")
     return newdf
-
-### PLOTTING FUNCTIONS
-
-def country_plot(df, country, platform, fl=8, fh=6, mx=0.1, my=0.05, names="all"):
-    if "plt" not in dir():
-        import matplotlib.pyplot as plt
-    if "gpd" not in dir():
-        import geopandas as gpd
-    vmaxi = df.agoda_num.max()*1.1
-    if platform == "agoda":
-        coln = "agoda_num"
-        color = "Reds"
-    elif platform == "booking":
-        coln = "booking_num"
-        color = "Blues"
-    else:
-        print("Platform not avaliable")
-        pass
-    # initialize axis
-    fig, ax = plt.subplots(figsize=(fl,fh))
-    # plot map on axis
-    countries = gpd.read_file(  
-         gpd.datasets.get_path("naturalearth_lowres"))
-    countries[countries["name"] == country].plot(color="lightgrey", ax=ax)
-    # plot points
-    df.plot(x="longitude", y="latitude", kind="scatter", 
-            c=coln, s=df[coln]/2, colormap=color, vmax=vmaxi, vmin=0, alpha=0.7,
-            title=f"Hotels {country} in {platform.capitalize()}", 
-            ax=ax)
-    # adding names of the cities
-    if names == "all":
-        for i in range(df.shape[0]):
-            plt.text(x=df.longitude[i]+0.01, y=df.latitude[i]-0.03,s=df.city[i], fontdict=dict(size=8))
-    elif names == None:
-        pass
-    elif names == "top":
-        top = df.agoda_num.max()/5
-        for i in range(df.shape[0]):
-            if df.agoda_num[i] > top:
-                plt.text(x=df.longitude[i]+0.01, y=df.latitude[i]-0.03,s=df.city[i], fontdict=dict(size=8))
-    #Removing X and Y labels
-    plt.xlabel("")
-    plt.ylabel("")
-    #adding padding
-    plt.margins(0.1, 0.05)
-    ax.collections[-1].colorbar.set_label("Number of Hotels")
-    # adding grid
-    ax.grid(visible=True, alpha=0.5)
-    plt.show()
-    return fig
+    
